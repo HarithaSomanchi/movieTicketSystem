@@ -1,0 +1,47 @@
+<%-- 
+    Document   : loginprocess
+    Created on : 8 Feb, 2021, 8:29:23 PM
+    Author     : Harita
+--%>
+
+<%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
+<%@page import="org.omg.CORBA.PUBLIC_MEMBER"%>
+<%@page import="java.sql.*"%>
+<%@page import="java.util.*"%>
+<%
+String username=request.getParameter("username");
+System.out.print(username);
+String userpass=request.getParameter("userpass");
+boolean status=false;
+try{
+Class.forName("com.mysql.cj.jdbc.Driver");
+Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/moviebooking","root","");
+PreparedStatement ps=con.prepareStatement("select * from login where email=? and password=? ");
+ps.setString(1,username);
+ps.setString(2,userpass);
+ResultSet rs=ps.executeQuery();
+status=rs.next();
+if(status){
+System.out.print("hi");
+username=rs.getString(2);
+session.setAttribute("username",String.valueOf(username));
+session.setAttribute("islogin","plz sign in first");
+
+%>
+<jsp:forward page="customermain.jsp"></jsp:forward>
+<%
+}
+else{
+System.out.print("hi");
+request.setAttribute("Error","Sorry! Username or Password Error. Plz Enter Correct Detail ");
+session.setAttribute("Loginmsg","Plz sign in first");
+%>
+<jsp:forward page="index.jsp"></jsp:forward>
+<%
+}
+}
+catch(Exception e){
+e.printStackTrace();
+}
+
+%>
